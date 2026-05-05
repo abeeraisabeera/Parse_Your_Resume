@@ -1,0 +1,15 @@
+# PDF Text Extraction (at least one required)
+pymupdf>=1.23.0
+# pdfplumber>=0.10.0  # alternative PDF extractor
+
+# LLM Integration (optional)
+groq>=0.4.0
+
+# Behance Scraping (optional)
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+
+# OCR Fallback (optional)
+# pytesseract>=0.3.10
+# pillow>=10.0.0
+# pdf2image>=1.16.0
