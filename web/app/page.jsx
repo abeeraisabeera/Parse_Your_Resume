@@ -23,6 +23,87 @@ const ROLE_OPTIONS = [
   ["marketing", "Marketing"],
   ["general", "General"]
 ];
+const SKILL_GROUPS = [
+  {
+    label: "Frontend",
+    options: [
+      ["react", "React"],
+      ["next.js", "Next.js"],
+      ["typescript", "TypeScript"],
+      ["javascript", "JavaScript"],
+      ["vue", "Vue"],
+      ["angular", "Angular"],
+      ["tailwind", "Tailwind CSS"],
+      ["redux", "Redux"],
+      ["react query", "React Query"],
+      ["web accessibility", "Accessibility"]
+    ]
+  },
+  {
+    label: "Backend",
+    options: [
+      ["node.js", "Node.js"],
+      ["express", "Express"],
+      ["python", "Python"],
+      ["django", "Django"],
+      ["fastapi", "FastAPI"],
+      ["java", "Java"],
+      ["spring", "Spring Boot"],
+      ["postgresql", "PostgreSQL"],
+      ["mongodb", "MongoDB"],
+      ["redis", "Redis"],
+      ["graphql", "GraphQL"],
+      ["rest api", "REST API"]
+    ]
+  },
+  {
+    label: "Data / AI",
+    options: [
+      ["sql", "SQL"],
+      ["pandas", "Pandas"],
+      ["numpy", "NumPy"],
+      ["spark", "Spark"],
+      ["airflow", "Airflow"],
+      ["dbt", "dbt"],
+      ["machine learning", "Machine Learning"],
+      ["llm", "LLM"],
+      ["rag", "RAG"],
+      ["tensorflow", "TensorFlow"],
+      ["pytorch", "PyTorch"],
+      ["power bi", "Power BI"]
+    ]
+  },
+  {
+    label: "DevOps / QA",
+    options: [
+      ["aws", "AWS"],
+      ["azure", "Azure"],
+      ["gcp", "GCP"],
+      ["docker", "Docker"],
+      ["kubernetes", "Kubernetes"],
+      ["terraform", "Terraform"],
+      ["ci/cd", "CI/CD"],
+      ["selenium", "Selenium"],
+      ["playwright", "Playwright"],
+      ["cypress", "Cypress"],
+      ["jmeter", "JMeter"]
+    ]
+  },
+  {
+    label: "Design / Marketing",
+    options: [
+      ["figma", "Figma"],
+      ["photoshop", "Photoshop"],
+      ["illustrator", "Illustrator"],
+      ["design systems", "Design Systems"],
+      ["seo", "SEO"],
+      ["google analytics", "Google Analytics"],
+      ["google ads", "Google Ads"],
+      ["crm", "CRM"],
+      ["shopify", "Shopify"]
+    ]
+  }
+];
 
 function candidateStatus(score) {
   const numeric = Number(score || 0);
@@ -958,13 +1039,22 @@ export default function HomePage() {
 
             <label className="label">
               Skills
-              <input
+              <select
                 className="input"
-                type="text"
                 value={skillFilter}
                 onChange={(event) => setSkillFilter(event.target.value)}
-                placeholder="React, Python, SQL"
-              />
+              >
+                <option value="">All skills</option>
+                {SKILL_GROUPS.map((group) => (
+                  <optgroup key={group.label} label={group.label}>
+                    {group.options.map(([value, label]) => (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
             </label>
 
             <label className="label">
