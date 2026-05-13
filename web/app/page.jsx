@@ -167,6 +167,7 @@ function candidateKey(candidate) {
 function buildCandidateParams({
   search,
   roleFilter,
+  skillFilter,
   shortlistFilter,
   minExperience,
   minScore,
@@ -176,6 +177,7 @@ function buildCandidateParams({
   const params = new URLSearchParams();
   if (search.trim()) params.set("search", search.trim());
   if (roleFilter !== "all") params.set("role", roleFilter);
+  if (skillFilter.trim()) params.set("skills", skillFilter.trim());
   if (shortlistFilter !== "all") params.set("shortlist", shortlistFilter);
   if (Number(minExperience || 0) > 0) params.set("min_experience", minExperience);
   if (Number(minScore || 0) > 0) params.set("min_score", String(minScore));
@@ -195,6 +197,7 @@ export default function HomePage() {
   const [health, setHealth] = useState(null);
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
+  const [skillFilter, setSkillFilter] = useState("");
   const [shortlistFilter, setShortlistFilter] = useState("all");
   const [minExperience, setMinExperience] = useState("0");
   const [minScore, setMinScore] = useState(0);
@@ -313,6 +316,10 @@ export default function HomePage() {
   const filteredCandidates = useMemo(() => {
     const results = dashboard?.results || [];
     const query = search.trim().toLowerCase();
+    const requiredSkills = skillFilter
+      .split(/[,;]/)
+      .map((skill) => skill.trim().toLowerCase())
+      .filter(Boolean);
     const experienceFloor = Number(minExperience || 0);
     const scoreFloor = Number(minScore || 0);
 
@@ -332,6 +339,17 @@ export default function HomePage() {
       const matchesSearch = !query || haystack.includes(query);
       const matchesRole =
         roleFilter === "all" || candidate.role_detected === roleFilter;
+      const candidateSkills = [
+        ...(candidate.top_skills || []),
+        ...(candidate.skills || [])
+      ].map((skill) => String(skill).toLowerCase());
+      const matchesSkill =
+        !requiredSkills.length ||
+        requiredSkills.every((requiredSkill) =>
+          candidateSkills.some(
+            (skill) => skill.includes(requiredSkill) || requiredSkill.includes(skill)
+          )
+        );
       const matchesShortlist =
         shortlistFilter === "all" ||
         (shortlistFilter === "shortlisted" && candidate.is_shortlisted) ||
@@ -344,13 +362,23 @@ export default function HomePage() {
       return (
         matchesSearch &&
         matchesRole &&
+        matchesSkill &&
         matchesShortlist &&
         matchesExperience &&
         matchesScore &&
         matchesDeleted
       );
     });
-  }, [dashboard, search, roleFilter, shortlistFilter, minExperience, minScore, includeDeleted]);
+  }, [
+    dashboard,
+    search,
+    roleFilter,
+    skillFilter,
+    shortlistFilter,
+    minExperience,
+    minScore,
+    includeDeleted
+  ]);
 
   const selectedCandidate = useMemo(() => {
     if (!filteredCandidates.length) return null;
@@ -455,6 +483,7 @@ export default function HomePage() {
     const params = buildCandidateParams({
       search,
       roleFilter,
+      skillFilter,
       shortlistFilter,
       minExperience,
       minScore,
@@ -899,6 +928,7 @@ export default function HomePage() {
               type="button"
               onClick={() => {
                 setRoleFilter("all");
+                setSkillFilter("");
                 setShortlistFilter("all");
                 setMinExperience("0");
                 setMinScore(0);
@@ -924,6 +954,17 @@ export default function HomePage() {
                   </option>
                 ))}
               </select>
+            </label>
+
+            <label className="label">
+              Skills
+              <input
+                className="input"
+                type="text"
+                value={skillFilter}
+                onChange={(event) => setSkillFilter(event.target.value)}
+                placeholder="React, Python, SQL"
+              />
             </label>
 
             <label className="label">

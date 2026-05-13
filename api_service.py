@@ -176,6 +176,7 @@ def _save_result(result: dict, filename: str) -> dict:
 def _candidate_query(
     search: str = "",
     role: str = "all",
+    skills: str = "",
     shortlist: str = "all",
     min_score: float = 0.0,
     min_experience: float = 0.0,
@@ -186,6 +187,7 @@ def _candidate_query(
         return candidate_store.list_candidates(
             search=search,
             role=role,
+            skills=skills,
             shortlist=shortlist,
             min_score=min_score,
             min_experience=min_experience,
@@ -222,6 +224,7 @@ def healthz() -> dict[str, object]:
 def list_stored_candidates(
     search: str = Query("", max_length=200),
     role: str = Query("all", max_length=64),
+    skills: str = Query("", max_length=300),
     shortlist: str = Query("all", pattern="^(all|shortlisted|not_shortlisted)$"),
     min_score: float = Query(0.0, ge=0, le=100),
     min_experience: float = Query(0.0, ge=0),
@@ -231,6 +234,7 @@ def list_stored_candidates(
     results = _candidate_query(
         search=search,
         role=role,
+        skills=skills,
         shortlist=shortlist,
         min_score=min_score,
         min_experience=min_experience,
@@ -270,6 +274,7 @@ def delete_candidate(candidate_id: str) -> dict:
 def export_candidates_xlsx(
     search: str = Query("", max_length=200),
     role: str = Query("all", max_length=64),
+    skills: str = Query("", max_length=300),
     shortlist: str = Query("all", pattern="^(all|shortlisted|not_shortlisted)$"),
     min_score: float = Query(0.0, ge=0, le=100),
     min_experience: float = Query(0.0, ge=0),
@@ -284,6 +289,7 @@ def export_candidates_xlsx(
     results = _candidate_query(
         search=search,
         role=role,
+        skills=skills,
         shortlist=shortlist,
         min_score=min_score,
         min_experience=min_experience,

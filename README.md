@@ -95,38 +95,22 @@ in a dashboard-style UI, and proxies requests through:
 
 - `/api/parse` for single or batch resume uploads
 - `/api/healthz` for backend capability checks
+- `/api/candidates` for persisted candidate lists and filters
+- `/api/candidates/export` for Excel export
+
+Dashboard filters include role, skills, shortlist state, minimum experience,
+minimum match score, text search, and deleted-resume visibility. The skills
+filter accepts comma-separated values such as `React, Python, SQL`.
 
 For local development, leave `PARSER_API_URL` pointed at
 `http://127.0.0.1:8000/parse`.
 
-### Deploy Backend on Render
+### Deployment Status
 
-The backend needs a normal web service because it runs FastAPI, PyMuPDF, and the
-native Tesseract OCR binary. This repo includes a `Dockerfile` and `render.yaml`
-for Render.
-
-1. Push this repo to GitHub.
-2. In Render, create a new Blueprint or Web Service from the repo.
-3. Use the repo root as the backend service root.
-4. Set these Render environment variables:
-   - `DATABASE_URL`: your Neon Postgres connection string
-   - `GROQ_API_KEY`: your Groq API key
-   - `CORS_ORIGINS`: your Vercel app URL, for example `https://your-app.vercel.app`
-   - `SHORTLIST_THRESHOLD`: `85`
-   - `TESSERACT_CMD`: `/usr/bin/tesseract`
-5. Deploy and verify `https://your-render-service.onrender.com/healthz`.
-
-### Deploy Frontend on Vercel
-
-Deploy the `web` directory as the Vercel project root. Set these Vercel
-environment variables after the Render backend is live:
-
-- `PARSER_API_URL=https://your-render-service.onrender.com/parse`
-- `PARSER_API_BASE_URL=https://your-render-service.onrender.com`
-
-Then deploy the Vercel project. The frontend proxies uploads, candidate storage,
-shortlist updates, deletes, health checks, and Excel export to the deployed
-FastAPI service.
+Vercel deployment is intentionally on hold until a backend hosting target is
+chosen. The Next.js frontend can be deployed from the `web` directory later, but
+production parsing, OCR, LLM enrichment, shortlist actions, and Excel export all
+require the FastAPI backend to be reachable at a public URL.
 
 ### Programmatic Usage
 

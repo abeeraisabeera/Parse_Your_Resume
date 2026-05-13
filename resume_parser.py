@@ -1394,6 +1394,167 @@ _ROLE_SKILL_GROUPS["fullstack"] = (
     _ROLE_SKILL_GROUPS["frontend"] | _ROLE_SKILL_GROUPS["backend"]
 )
 
+_SKILL_ALIASES.update({
+    # frontend ecosystem
+    "solid.js": ("solid.js", "solidjs", "solid js"),
+    "astro": ("astro", "astro.js"),
+    "remix": ("remix", "remix.run"),
+    "react query": ("react query", "tanstack query"),
+    "tanstack router": ("tanstack router",),
+    "mobx": ("mobx",),
+    "pinia": ("pinia",),
+    "vuex": ("vuex",),
+    "rxjs": ("rxjs", "reactive extensions"),
+    "storybook": ("storybook",),
+    "material ui": ("material ui", "mui"),
+    "chakra ui": ("chakra ui", "chakra"),
+    "shadcn/ui": ("shadcn/ui", "shadcn", "shadcn ui"),
+    "bootstrap": ("bootstrap",),
+    "web components": ("web components", "custom elements"),
+    "pwa": ("pwa", "progressive web app"),
+    "web accessibility": ("web accessibility", "wcag", "a11y"),
+    "responsive design": ("responsive design",),
+    # backend ecosystem
+    "nestjs": ("nestjs", "nest.js", "nest js"),
+    "hapi": ("hapi", "hapi.js"),
+    "koa": ("koa", "koa.js"),
+    "prisma": ("prisma",),
+    "typeorm": ("typeorm", "type orm"),
+    "sequelize": ("sequelize",),
+    "sqlalchemy": ("sqlalchemy", "sql alchemy"),
+    "pydantic": ("pydantic",),
+    "celery": ("celery",),
+    "rabbitmq": ("rabbitmq", "rabbit mq"),
+    "nats": ("nats",),
+    "oauth": ("oauth", "oauth2", "openid connect", "oidc"),
+    "jwt": ("jwt", "json web token"),
+    "api design": ("api design", "api architecture"),
+    "distributed systems": ("distributed systems",),
+    "event-driven architecture": ("event-driven architecture", "event driven architecture"),
+    # databases and search
+    "mariadb": ("mariadb", "maria db"),
+    "oracle": ("oracle", "oracle db"),
+    "sql server": ("sql server", "mssql", "ms sql"),
+    "supabase": ("supabase",),
+    "firebase": ("firebase", "firestore"),
+    "neo4j": ("neo4j",),
+    "opensearch": ("opensearch", "open search"),
+    "meilisearch": ("meilisearch",),
+    "vector databases": ("vector database", "vector databases", "pinecone", "weaviate", "qdrant", "chromadb"),
+    # data / analytics / AI
+    "polars": ("polars",),
+    "dask": ("dask",),
+    "ray": ("ray",),
+    "duckdb": ("duckdb", "duck db"),
+    "redshift": ("redshift", "amazon redshift"),
+    "power query": ("power query",),
+    "excel": ("excel", "advanced excel"),
+    "statistics": ("statistics", "statistical analysis"),
+    "machine learning": ("machine learning", "ml"),
+    "deep learning": ("deep learning",),
+    "generative ai": ("generative ai", "genai", "gen ai"),
+    "llm": ("llm", "large language model", "large language models"),
+    "rag": ("rag", "retrieval augmented generation"),
+    "prompt engineering": ("prompt engineering",),
+    "computer vision": ("computer vision", "opencv"),
+    "nlp": ("nlp", "natural language processing"),
+    "xgboost": ("xgboost",),
+    "lightgbm": ("lightgbm",),
+    "mlflow": ("mlflow",),
+    "kubeflow": ("kubeflow",),
+    # devops / cloud
+    "github": ("github",),
+    "gitlab": ("gitlab",),
+    "bitbucket": ("bitbucket",),
+    "circleci": ("circleci", "circle ci"),
+    "travis ci": ("travis ci", "travis"),
+    "azure devops": ("azure devops",),
+    "cloudflare": ("cloudflare",),
+    "vercel": ("vercel",),
+    "netlify": ("netlify",),
+    "render": ("render",),
+    "railway": ("railway",),
+    "heroku": ("heroku",),
+    "helm": ("helm", "helm charts"),
+    "argocd": ("argocd", "argo cd"),
+    "istio": ("istio",),
+    "linkerd": ("linkerd",),
+    "vault": ("vault", "hashicorp vault"),
+    "sentry": ("sentry",),
+    "new relic": ("new relic", "newrelic"),
+    "splunk": ("splunk",),
+    "observability": ("observability", "monitoring"),
+    # QA
+    "manual testing": ("manual testing",),
+    "api testing": ("api testing",),
+    "mobile testing": ("mobile testing",),
+    "performance testing": ("performance testing", "load testing", "stress testing"),
+    "jmeter": ("jmeter", "apache jmeter"),
+    "k6": ("k6",),
+    "appium": ("appium",),
+    "cucumber": ("cucumber", "gherkin"),
+    "testng": ("testng",),
+    "junit": ("junit",),
+    "pytest": ("pytest",),
+    # design and marketing
+    "canva": ("canva",),
+    "webflow": ("webflow",),
+    "framer": ("framer",),
+    "miro": ("miro",),
+    "user research": ("user research", "ux research"),
+    "information architecture": ("information architecture",),
+    "shopify": ("shopify",),
+    "wordpress": ("wordpress",),
+    "woocommerce": ("woocommerce",),
+    "google search console": ("google search console", "gsc"),
+    "ahrefs": ("ahrefs",),
+    "semrush": ("semrush",),
+    "hotjar": ("hotjar",),
+    "mixpanel": ("mixpanel",),
+    "amplitude": ("amplitude",),
+})
+
+_ROLE_SKILL_GROUPS["frontend"].update({
+    "solid.js", "astro", "remix", "react query", "tanstack router", "mobx",
+    "pinia", "vuex", "rxjs", "storybook", "material ui", "chakra ui",
+    "shadcn/ui", "bootstrap", "web components", "pwa", "web accessibility",
+    "responsive design",
+})
+_ROLE_SKILL_GROUPS["backend"].update({
+    "nestjs", "hapi", "koa", "prisma", "typeorm", "sequelize", "sqlalchemy",
+    "pydantic", "celery", "rabbitmq", "nats", "oauth", "jwt", "api design",
+    "distributed systems", "event-driven architecture", "mariadb", "oracle",
+    "sql server", "supabase", "firebase", "neo4j", "opensearch",
+    "vector databases",
+})
+_ROLE_SKILL_GROUPS["data"].update({
+    "polars", "dask", "ray", "duckdb", "redshift", "power query", "excel",
+    "statistics", "machine learning", "deep learning", "generative ai",
+    "llm", "rag", "prompt engineering", "computer vision", "nlp", "xgboost",
+    "lightgbm", "mlflow", "kubeflow", "vector databases",
+})
+_ROLE_SKILL_GROUPS["devops"].update({
+    "github", "gitlab", "bitbucket", "circleci", "travis ci", "azure devops",
+    "cloudflare", "vercel", "netlify", "render", "railway", "heroku",
+    "istio", "linkerd", "vault", "sentry", "new relic", "splunk",
+    "observability",
+})
+_ROLE_SKILL_GROUPS["qa"].update({
+    "manual testing", "api testing", "mobile testing", "performance testing",
+    "jmeter", "k6", "appium", "cucumber", "testng", "junit", "pytest",
+})
+_ROLE_SKILL_GROUPS["design"].update({
+    "canva", "webflow", "miro", "user research", "information architecture",
+    "web accessibility",
+})
+_ROLE_SKILL_GROUPS["marketing"].update({
+    "shopify", "wordpress", "woocommerce", "google search console", "ahrefs",
+    "semrush", "hotjar", "mixpanel", "amplitude",
+})
+_ROLE_SKILL_GROUPS["fullstack"] = (
+    _ROLE_SKILL_GROUPS["frontend"] | _ROLE_SKILL_GROUPS["backend"]
+)
+
 
 def _term_pattern(term: str) -> re.Pattern:
     escaped = re.escape(term.lower()).replace(r"\ ", r"\s+")

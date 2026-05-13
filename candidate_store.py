@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import uuid
 from datetime import datetime, timezone
 from typing import Any
@@ -260,9 +261,40 @@ def _matches_query(candidate: dict[str, Any], query: str) -> bool:
     return query.lower() in haystack
 
 
+def _normalise_filter_terms(value: str | list[str] | tuple[str, ...] | None) -> list[str]:
+    if not value:
+        return []
+    if isinstance(value, str):
+        raw_terms = re.split(r"[,;]", value)
+    else:
+        raw_terms = []
+        for item in value:
+            raw_terms.extend(re.split(r"[,;]", str(item)))
+    return [term.strip().lower() for term in raw_terms if term.strip()]
+
+
+def _matches_skills(candidate: dict[str, Any], skills_filter: str | list[str] | None) -> bool:
+    required = _normalise_filter_terms(skills_filter)
+    if not required:
+        return True
+    candidate_skills = {
+        str(skill).lower()
+        for skill in [
+            *(candidate.get("skills") or []),
+            *(candidate.get("top_skills") or []),
+        ]
+        if skill
+    }
+    return all(
+        any(required_skill in skill or skill in required_skill for skill in candidate_skills)
+        for required_skill in required
+    )
+
+
 def list_candidates(
     search: str = "",
     role: str = "all",
+    skills: str | list[str] | None = None,
     shortlist: str = "all",
     min_score: float = 0.0,
     min_experience: float = 0.0,
@@ -280,6 +312,8 @@ def list_candidates(
         if not include_deleted and candidate.get("is_deleted"):
             continue
         if role != "all" and candidate.get("role_detected") != role:
+            continue
+        if not _matches_skills(candidate, skills):
             continue
         if shortlist == "shortlisted" and not candidate.get("is_shortlisted"):
             continue
