@@ -70,6 +70,10 @@ Available endpoints:
 - `GET /healthz` for health checks
 - `POST /parse` for multipart PDF uploads
 - `POST /parse-batch` for batch PDF uploads and ranking
+- `GET /candidates` for stored candidate lists and filters
+- `PATCH /candidates/{id}/shortlist` for HR shortlist overrides
+- `DELETE /candidates/{id}` for soft-deleting outdated resumes
+- `GET /candidates/export.xlsx` for Excel export
 
 OCR notes:
 
@@ -93,8 +97,36 @@ in a dashboard-style UI, and proxies requests through:
 - `/api/healthz` for backend capability checks
 
 For local development, leave `PARSER_API_URL` pointed at
-`http://127.0.0.1:8000/parse`. For Vercel, deploy the `web` directory as the
-project root and set `PARSER_API_URL` to your deployed parser API.
+`http://127.0.0.1:8000/parse`.
+
+### Deploy Backend on Render
+
+The backend needs a normal web service because it runs FastAPI, PyMuPDF, and the
+native Tesseract OCR binary. This repo includes a `Dockerfile` and `render.yaml`
+for Render.
+
+1. Push this repo to GitHub.
+2. In Render, create a new Blueprint or Web Service from the repo.
+3. Use the repo root as the backend service root.
+4. Set these Render environment variables:
+   - `DATABASE_URL`: your Neon Postgres connection string
+   - `GROQ_API_KEY`: your Groq API key
+   - `CORS_ORIGINS`: your Vercel app URL, for example `https://your-app.vercel.app`
+   - `SHORTLIST_THRESHOLD`: `85`
+   - `TESSERACT_CMD`: `/usr/bin/tesseract`
+5. Deploy and verify `https://your-render-service.onrender.com/healthz`.
+
+### Deploy Frontend on Vercel
+
+Deploy the `web` directory as the Vercel project root. Set these Vercel
+environment variables after the Render backend is live:
+
+- `PARSER_API_URL=https://your-render-service.onrender.com/parse`
+- `PARSER_API_BASE_URL=https://your-render-service.onrender.com`
+
+Then deploy the Vercel project. The frontend proxies uploads, candidate storage,
+shortlist updates, deletes, health checks, and Excel export to the deployed
+FastAPI service.
 
 ### Programmatic Usage
 
