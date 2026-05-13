@@ -2,7 +2,7 @@
 [![HF Space](https://img.shields.io/badge/HuggingFace-Space-yellow)](https://huggingface.co/spaces/abzyvantae/Parse_Your_Resume_Backend)
 [![Vercel](https://img.shields.io/badge/Vercel-Deployed-black)]([https://your-project.vercel.app](https://web-sigma-flame-90.vercel.app/))
 [![Python](https://img.shields.io/badge/Python-3.9%2B-blue)](https://www.python.org)
-[![Tests](https://img.shields.io/badge/Tests-120%2B%20cases-brightgreen)]
+[![Tests]](https://img.shields.io/badge/Tests-120%2B%20cases-brightgreen)
 
 > A production-grade PDF resume parser that extracts structured candidate data, scores resumes across multiple dimensions, and ranks applicants for recruitment pipelines.
 
