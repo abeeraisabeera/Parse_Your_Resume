@@ -53,10 +53,48 @@ python resume_parser.py --input ./resumes/ --output results.json
 # With LLM enhancement (requires GROQ_API_KEY)
 export GROQ_API_KEY="gsk_..."
 python resume_parser.py --input ./resumes/
-
-# Skip Behance portfolio fetching
-python resume_parser.py --input ./resumes/ --no-behance
 ```
+
+### API Service
+
+```bash
+# Install Python dependencies
+pip install -r requirements.txt
+
+# Start the FastAPI wrapper
+uvicorn api_service:app --reload
+```
+
+Available endpoints:
+
+- `GET /healthz` for health checks
+- `POST /parse` for multipart PDF uploads
+- `POST /parse-batch` for batch PDF uploads and ranking
+
+OCR notes:
+
+- The parser now attempts OCR when extracted text is blank or clearly low-quality.
+- Install the native Tesseract binary on the API host to enable scanned-PDF support.
+- If Tesseract is not installed, `/healthz` will report OCR as unavailable.
+
+### Web App
+
+```bash
+cd web
+cp .env.example .env.local
+npm install
+npm run dev
+```
+
+The Next.js app supports both single and batch uploads, shows ranked candidates
+in a dashboard-style UI, and proxies requests through:
+
+- `/api/parse` for single or batch resume uploads
+- `/api/healthz` for backend capability checks
+
+For local development, leave `PARSER_API_URL` pointed at
+`http://127.0.0.1:8000/parse`. For Vercel, deploy the `web` directory as the
+project root and set `PARSER_API_URL` to your deployed parser API.
 
 ### Programmatic Usage
 

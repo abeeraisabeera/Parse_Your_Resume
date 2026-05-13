@@ -126,6 +126,16 @@ class TestCleanText(unittest.TestCase):
         self.assertIn("Acme Corp", result)
 
 
+class TestOCRHeuristics(unittest.TestCase):
+
+    def test_low_quality_text_detected(self):
+        text = "x x x x\n1 2 3 4\n- - - -\n"
+        self.assertTrue(rp._looks_like_low_quality_text(text))
+
+    def test_normal_resume_text_not_flagged(self):
+        self.assertFalse(rp._looks_like_low_quality_text(CLEAN_RESUME))
+
+
 # ══════════════════════════════════════════════════════════════════════════
 # 2.  REGEX PRE-PASS
 # ══════════════════════════════════════════════════════════════════════════
@@ -142,6 +152,14 @@ class TestRegexPrepass(unittest.TestCase):
 
     def test_email_missing(self):
         self.assertIsNone(rp.regex_prepass("No contact info.")["email"])
+
+    def test_email_trailing_punctuation_removed(self):
+        rf = rp.regex_prepass("Email: john.doe@example.com,")
+        self.assertEqual(rf["email"], "john.doe@example.com")
+
+    def test_email_with_ocr_style_spacing_extracted(self):
+        rf = rp.regex_prepass("john . doe @ example . com")
+        self.assertEqual(rf["email"], "john.doe@example.com")
 
     def test_phone_extracted(self):
         self.assertIn("555", self.clean["phone"])
@@ -220,6 +238,45 @@ class TestRegexPrepass(unittest.TestCase):
         rf = rp.regex_prepass("linkedin.com/in/user behance.net/artist")
         self.assertIn("artist", rf["behance"])
         self.assertNotIn("artist", rf["linkedin"])
+
+    def test_name_extracted_from_header(self):
+        self.assertEqual(self.clean["name"], "John Doe")
+
+    def test_name_not_taken_from_profile_summary(self):
+        text = textwrap.dedent("""\
+            Profile Summary
+            John Doe
+            john.doe@example.com
+            Senior Software Engineer
+            Skills: Python, React
+        """)
+        rf = rp.regex_prepass(text)
+        self.assertEqual(rf["name"], "John Doe")
+
+    def test_name_fallback_uses_email_local_part(self):
+        text = textwrap.dedent("""\
+            Contact Details
+            john.doe@example.com
+            Senior Software Engineer
+            Skills: Python, React
+        """)
+        rf = rp.regex_prepass(text)
+        self.assertEqual(rf["name"], "John Doe")
+
+    def test_experience_ranges_ignore_education_years(self):
+        text = textwrap.dedent("""\
+            John Doe
+            john@example.com
+
+            EXPERIENCE
+            Software Engineer - Acme Corp   Jan 2020 - Present
+
+            EDUCATION
+            B.Sc. Computer Science - State University, 2016 - 2020
+        """)
+        rf = rp.regex_prepass(text)
+        self.assertEqual(len(rf["_experience_entries"]), 1)
+        self.assertEqual(rf["_experience_entries"][0]["company"], "Acme Corp")
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -480,6 +537,37 @@ class TestRuleBasedParse(unittest.TestCase):
             self.assertGreaterEqual(r["experience_confidence"], 0.0)
             self.assertLessEqual(r["experience_confidence"],   1.0)
 
+    def test_name_current_role_and_companies_populated(self):
+        result = self._parse(CLEAN_RESUME)
+        self.assertEqual(result["name"], "John Doe")
+        self.assertEqual(result["current_role"], "Senior Software Engineer")
+        self.assertIn("Acme Corp", result["companies_worked"])
+
+    def test_experience_ignores_education_years(self):
+        text = textwrap.dedent("""\
+            Sarah Connor
+            sarah@example.com
+
+            EXPERIENCE
+            Product Manager - SkyNet   Feb 2021 - Present
+
+            EDUCATION
+            BBA - Future University 2016 - 2020
+
+            SKILLS
+            SQL, Tableau, Excel
+        """)
+        result = self._parse(text)
+        self.assertLess(result["estimated_years_of_experience"], 8.0)
+        self.assertGreater(result["estimated_years_of_experience"], 4.0)
+
+    def test_display_scores_added(self):
+        result = self._parse(CLEAN_RESUME)
+        for key in ("skills_match_score", "consistency_score", "evidence_score", "overall_score"):
+            self.assertIn(key, result)
+            self.assertGreaterEqual(result[key], 0)
+            self.assertLessEqual(result[key], 100)
+
 
 # ══════════════════════════════════════════════════════════════════════════
 # 8.  MERGE RESULTS
@@ -566,6 +654,35 @@ class TestMergeResults(unittest.TestCase):
                     "experience_confidence", "current_role", "seniority_level",
                     "education", "resume_quality_score", "ranking_score", "notes"):
             self.assertIn(key, final)
+
+    def test_bad_llm_name_replaced_with_regex_name(self):
+        llm = self._llm()
+        llm["name"] = "Acme Corporation"
+        final = rp.merge_results({**self._regex(), "name": "Test User"}, llm)
+        self.assertEqual(final["name"], "Test User")
+
+    def test_large_llm_experience_mismatch_corrected(self):
+        llm = self._llm()
+        llm["estimated_years_of_experience"] = 11
+        regex_fields = {
+            **self._regex(),
+            "_experience_month_ranges": [(rp._month_index(2020, 1), rp._month_index(2022, 12))],
+            "_experience_confidences": [0.8],
+        }
+        final = rp.merge_results(regex_fields, llm)
+        self.assertLess(final["estimated_years_of_experience"], 5.0)
+
+    def test_calibrated_ranking_not_higher_than_base_for_sparse_resume(self):
+        llm = self._llm()
+        llm["ranking_score"] = 82.0
+        llm["skills"] = ["Python"]
+        llm["top_skills"] = ["Python"]
+        llm["companies_worked"] = []
+        llm["current_role"] = None
+        llm["name"] = None
+        llm["experience_confidence"] = 0.2
+        final = rp.merge_results(self._regex(), llm)
+        self.assertLess(final["ranking_score"], 82.0)
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -725,6 +842,13 @@ class TestParsePipelineMocked(unittest.TestCase):
     def test_no_behance_flag(self, _):
         result = rp.parse_resume("fake.pdf", groq_client=None, fetch_behance=False)
         self.assertEqual(result["behance"]["fetch_status"], "skipped")
+
+    @patch("resume_parser.extract_text", return_value=CLEAN_RESUME)
+    def test_selected_model_forwarded_to_llm(self, _):
+        client = self._groq_client()
+        rp.parse_resume("fake.pdf", groq_client=client, model="llama-custom")
+        kwargs = client.chat.completions.create.call_args.kwargs
+        self.assertEqual(kwargs["model"], "llama-custom")
 
 
 # ══════════════════════════════════════════════════════════════════════════
