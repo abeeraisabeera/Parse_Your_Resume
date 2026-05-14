@@ -732,3 +732,660 @@ select {
     grid-column: 1 / -1;
   }
 }
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid rgba(123, 97, 255, 0.28);
+  outline-offset: 2px;
+}
+
+.dashboardShell {
+  display: grid;
+  gap: 16px;
+  max-width: 1680px;
+  margin: 0 auto;
+}
+
+@media (min-width: 1120px) {
+  .dashboardShell {
+    grid-template-columns: 282px minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.appSidebar {
+  position: sticky;
+  top: 12px;
+  display: grid;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--border);
+  border-radius: 26px;
+  padding: 18px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
+
+.contentShell {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.globalTopbar,
+.pageHero {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+}
+
+@media (min-width: 880px) {
+  .globalTopbar,
+  .pageHero {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.globalTopbar h1,
+.pageHero h2 {
+  margin: 0 0 6px;
+  letter-spacing: -0.03em;
+}
+
+.topbarActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.collapseButton {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 9px 12px;
+  background: var(--panel-soft);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.brandWide {
+  min-height: 48px;
+}
+
+.navText {
+  display: grid;
+  gap: 2px;
+}
+
+.navText small {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 400;
+}
+
+.sidebarCollapsed .appSidebar {
+  align-content: start;
+}
+
+@media (min-width: 1120px) {
+  .sidebarCollapsed {
+    grid-template-columns: 94px minmax(0, 1fr);
+  }
+
+  .sidebarCollapsed .brandWide div:last-child,
+  .sidebarCollapsed .navText,
+  .sidebarCollapsed .systemCard,
+  .sidebarCollapsed .collapseButton {
+    display: none;
+  }
+
+  .sidebarCollapsed .navItem {
+    justify-content: center;
+  }
+}
+
+.pageGrid {
+  display: grid;
+  gap: 16px;
+}
+
+.wideMetrics {
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+}
+
+.statCard.success {
+  border-color: rgba(22, 163, 74, 0.22);
+}
+
+.dashboardAnalytics {
+  align-items: stretch;
+}
+
+.twoColumnGrid,
+.analyticsCanvas,
+.uploadWorkflow,
+.candidateLayout {
+  display: grid;
+  gap: 16px;
+}
+
+@media (min-width: 1080px) {
+  .twoColumnGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .uploadWorkflow {
+    grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+  }
+
+  .uploadWorkflow > .panel:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .candidateLayout {
+    grid-template-columns: 260px minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .analyticsCanvas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .heatmapPanel {
+    grid-column: 1 / -1;
+  }
+}
+
+.alignStart {
+  align-items: start;
+}
+
+.roleRail {
+  position: sticky;
+  top: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.roleTab {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 11px 12px;
+  background: #fff;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.roleTab.active,
+.activeControl {
+  border-color: rgba(123, 97, 255, 0.35);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.candidateMain {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.filterPanel.compact .filterGrid {
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+}
+
+.filterGrid,
+.formGrid,
+.statusMatrix,
+.stateGrid {
+  display: grid;
+  gap: 12px;
+}
+
+@media (min-width: 760px) {
+  .filterGrid,
+  .formGrid,
+  .statusMatrix,
+  .stateGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1180px) {
+  .filterGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.filterChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.filterChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(123, 97, 255, 0.22);
+  border-radius: 999px;
+  padding: 7px 10px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.filterChip span {
+  font-weight: 700;
+}
+
+.inlineLabel {
+  min-width: 180px;
+}
+
+.candidateTableHeadWide,
+.candidateRowWide {
+  grid-template-columns: 58px minmax(190px, 1.4fr) 130px 105px 110px 105px 130px 112px;
+}
+
+.candidateRowWide {
+  cursor: default;
+}
+
+.rowButton,
+.cardSelect {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.rankButton {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.candidateCardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.candidateCard {
+  display: grid;
+  gap: 12px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 14px;
+  background: #fff;
+}
+
+.candidateCard.active {
+  border-color: rgba(123, 97, 255, 0.35);
+  box-shadow: 0 18px 38px rgba(123, 97, 255, 0.12);
+}
+
+.candidateCard.deleted {
+  opacity: 0.62;
+}
+
+.cardMetrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.cardMetrics span {
+  display: grid;
+  gap: 2px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 8px;
+  font-weight: 700;
+}
+
+.cardMetrics small {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.candidateCardFooter,
+.paginationBar,
+.previewRow,
+.roleAnalyticsRow,
+.skillRow,
+.queueItem,
+.insightBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.paginationBar {
+  margin-top: 14px;
+  color: var(--muted);
+}
+
+.drawerOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  justify-items: end;
+}
+
+.drawerScrim {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(22, 27, 45, 0.38);
+  cursor: pointer;
+}
+
+.candidateDrawer {
+  position: relative;
+  z-index: 1;
+  width: min(920px, 100%);
+  height: 100%;
+  overflow: auto;
+  display: grid;
+  align-content: start;
+  gap: 16px;
+  padding: 20px;
+  background: var(--bg);
+  box-shadow: -28px 0 70px rgba(17, 24, 39, 0.18);
+}
+
+.drawerHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 16px;
+}
+
+.stickyActions {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  justify-content: flex-start;
+  background: rgba(244, 246, 251, 0.9);
+  padding: 8px 0;
+  backdrop-filter: blur(12px);
+}
+
+.profileGrid {
+  display: grid;
+  gap: 14px;
+}
+
+@media (min-width: 780px) {
+  .profileGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.detailCardBlock {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 14px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.detailCardBlock h3 {
+  margin: 0 0 12px;
+}
+
+.detailCardBlock.wide {
+  grid-column: 1 / -1;
+}
+
+.compactDoc {
+  min-height: 210px;
+}
+
+.mutedChip {
+  color: var(--muted);
+  background: #f6f7fb;
+}
+
+.warningChip {
+  background: rgba(245, 158, 11, 0.14);
+  color: #b45309;
+}
+
+.successChip {
+  background: rgba(22, 163, 74, 0.12);
+  color: var(--success);
+}
+
+.timelineList {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.timelineList li {
+  display: grid;
+  gap: 4px;
+  padding-left: 14px;
+  border-left: 3px solid var(--accent-soft);
+}
+
+.timelineList span {
+  color: var(--muted);
+}
+
+.scoreBreakdown {
+  display: grid;
+  gap: 12px;
+}
+
+.scoreBreakdown > div {
+  display: grid;
+  grid-template-columns: 160px 56px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  text-transform: capitalize;
+}
+
+.largeUpload {
+  min-height: 260px;
+  place-content: center;
+  text-align: center;
+}
+
+.largeUpload.isLoading {
+  opacity: 0.72;
+}
+
+.queueList,
+.skillList,
+.previewList,
+.roleAnalyticsList,
+.insightBars {
+  display: grid;
+  gap: 10px;
+}
+
+.queueItem,
+.skillRow,
+.previewRow,
+.roleAnalyticsRow {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 11px 12px;
+  background: #fff;
+}
+
+.queueItem small,
+.skillRow small,
+.previewRow small {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+}
+
+.queueItem mark,
+.statePill,
+.queueItem.completed mark {
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.queueItem.failed mark,
+.statePill.failed {
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--danger);
+}
+
+.queueItem.completed mark,
+.statePill.completed {
+  background: rgba(22, 163, 74, 0.12);
+  color: var(--success);
+}
+
+.queueItem.parsing mark,
+.statePill.parsing {
+  background: rgba(245, 158, 11, 0.14);
+  color: #b45309;
+}
+
+.statePill {
+  display: grid;
+  gap: 4px;
+  border: 1px solid var(--border);
+}
+
+.statePill span {
+  color: var(--muted);
+}
+
+.analyticsCanvas .panel {
+  min-height: 260px;
+}
+
+.insightBar {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr) 58px;
+}
+
+.heatmapGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.heatmapCell {
+  display: grid;
+  gap: 6px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px;
+  background: linear-gradient(180deg, #fff 0%, #f7f5ff 100%);
+}
+
+.heatmapCell span {
+  color: var(--muted);
+}
+
+.rolePicker {
+  display: grid;
+  gap: 8px;
+  max-height: 290px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.compactCheck {
+  padding: 8px 10px;
+}
+
+.inlineSearch {
+  min-width: 220px;
+}
+
+.statusMatrix > div {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+  background: #fff;
+}
+
+.statusMatrix span {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--muted);
+}
+
+.message.info {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.18);
+  color: #1d4ed8;
+}
+
+.compactButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 980px) {
+  .candidateTable {
+    overflow-x: auto;
+  }
+
+  .candidateTableHeadWide,
+  .candidateRowWide {
+    min-width: 980px;
+  }
+
+  .scoreBreakdown > div {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .drawerHeader,
+  .candidateCardFooter,
+  .paginationBar,
+  .previewRow,
+  .skillRow,
+  .queueItem {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .candidateDrawer {
+    padding: 12px;
+  }
+}

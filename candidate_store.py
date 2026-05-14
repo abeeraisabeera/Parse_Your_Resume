@@ -24,13 +24,14 @@ try:
         Table,
         Text,
         create_engine,
+        delete,
         select,
         update,
     )
     from sqlalchemy.engine import Engine
 except ImportError:  # pragma: no cover - reported through healthz
     Boolean = Column = DateTime = Float = Integer = JSON = MetaData = String = Table = Text = None
-    create_engine = select = update = None
+    create_engine = delete = select = update = None
     Engine = Any
 
 
@@ -100,6 +101,66 @@ candidates = Table(
     Column("deleted_at", DateTime(timezone=True), nullable=True),
 ) if metadata is not None else None
 
+role_definitions = Table(
+    "role_definitions",
+    metadata,
+    Column("id", String(64), primary_key=True),
+    Column("label", String(255), nullable=False),
+    Column("short_label", String(120), nullable=True),
+    Column("category", String(120), nullable=True),
+    Column("description", Text, nullable=True),
+    Column("is_custom", Boolean, nullable=False, default=False),
+    Column("created_at", DateTime(timezone=True), nullable=False),
+    Column("updated_at", DateTime(timezone=True), nullable=False),
+) if metadata is not None else None
+
+skill_taxonomy = Table(
+    "skill_taxonomy",
+    metadata,
+    Column("id", String(120), primary_key=True),
+    Column("label", String(255), nullable=False),
+    Column("category", String(120), nullable=False, default="Uncategorized"),
+    Column("aliases", JSON, nullable=False),
+    Column("roles", JSON, nullable=False),
+    Column("is_custom", Boolean, nullable=False, default=True),
+    Column("created_at", DateTime(timezone=True), nullable=False),
+    Column("updated_at", DateTime(timezone=True), nullable=False),
+) if metadata is not None else None
+
+DEFAULT_ROLE_DEFINITIONS = [
+    {"id": "frontend", "label": "Frontend Developer", "short_label": "Frontend", "category": "Engineering"},
+    {"id": "backend", "label": "Backend Developer", "short_label": "Backend", "category": "Engineering"},
+    {"id": "fullstack", "label": "Fullstack Developer", "short_label": "Fullstack", "category": "Engineering"},
+    {"id": "data", "label": "Data Scientist / BI", "short_label": "Data", "category": "Data / AI"},
+    {"id": "devops", "label": "DevOps / Cloud", "short_label": "DevOps", "category": "Infrastructure"},
+    {"id": "qa", "label": "QA / Testing", "short_label": "QA", "category": "Quality"},
+    {"id": "design", "label": "UI/UX Designer", "short_label": "Design", "category": "Creative"},
+    {"id": "marketing", "label": "Marketing", "short_label": "Marketing", "category": "Growth"},
+    {"id": "hr", "label": "Human Resources", "short_label": "HR", "category": "Operations"},
+    {"id": "sales", "label": "Sales", "short_label": "Sales", "category": "Revenue"},
+    {"id": "product", "label": "Product Manager", "short_label": "Product", "category": "Product"},
+    {"id": "general", "label": "General", "short_label": "General", "category": "General"},
+]
+
+DEFAULT_SKILL_TAXONOMY = [
+    {"id": "react", "label": "React", "category": "Frontend", "roles": ["frontend", "fullstack"]},
+    {"id": "next.js", "label": "Next.js", "category": "Frontend", "roles": ["frontend", "fullstack"]},
+    {"id": "typescript", "label": "TypeScript", "category": "Frontend", "roles": ["frontend", "fullstack"]},
+    {"id": "javascript", "label": "JavaScript", "category": "Frontend", "roles": ["frontend", "fullstack"]},
+    {"id": "python", "label": "Python", "category": "Backend", "roles": ["backend", "data"]},
+    {"id": "fastapi", "label": "FastAPI", "category": "Backend", "roles": ["backend"]},
+    {"id": "postgresql", "label": "PostgreSQL", "category": "Backend", "roles": ["backend", "data"]},
+    {"id": "docker", "label": "Docker", "category": "DevOps", "roles": ["devops", "backend"]},
+    {"id": "kubernetes", "label": "Kubernetes", "category": "DevOps", "roles": ["devops"]},
+    {"id": "sql", "label": "SQL", "category": "Data / AI", "roles": ["data", "backend"]},
+    {"id": "pandas", "label": "Pandas", "category": "Data / AI", "roles": ["data"]},
+    {"id": "pytorch", "label": "PyTorch", "category": "Data / AI", "roles": ["data"]},
+    {"id": "figma", "label": "Figma", "category": "Design", "roles": ["design"]},
+    {"id": "design systems", "label": "Design Systems", "category": "Design", "roles": ["design", "frontend"]},
+    {"id": "seo", "label": "SEO", "category": "Marketing", "roles": ["marketing"]},
+    {"id": "google analytics", "label": "Google Analytics", "category": "Marketing", "roles": ["marketing"]},
+]
+
 
 def get_engine() -> Engine:
     global _ENGINE
@@ -121,7 +182,48 @@ def init_db() -> None:
     if metadata is None:
         raise RuntimeError("SQLAlchemy is not installed. Run pip install -r requirements.txt.")
     metadata.create_all(get_engine())
+    _seed_taxonomy()
     _INIT_DONE = True
+
+
+def _seed_taxonomy() -> None:
+    if role_definitions is None or skill_taxonomy is None:
+        return
+    now = _now()
+    with get_engine().begin() as conn:
+        existing_roles = {row.id for row in conn.execute(select(role_definitions.c.id)).fetchall()}
+        for role in DEFAULT_ROLE_DEFINITIONS:
+            if role["id"] in existing_roles:
+                continue
+            conn.execute(
+                role_definitions.insert().values(
+                    id=role["id"],
+                    label=role["label"],
+                    short_label=role.get("short_label"),
+                    category=role.get("category"),
+                    description=role.get("description"),
+                    is_custom=False,
+                    created_at=now,
+                    updated_at=now,
+                )
+            )
+
+        existing_skills = {row.id for row in conn.execute(select(skill_taxonomy.c.id)).fetchall()}
+        for skill in DEFAULT_SKILL_TAXONOMY:
+            if skill["id"] in existing_skills:
+                continue
+            conn.execute(
+                skill_taxonomy.insert().values(
+                    id=skill["id"],
+                    label=skill["label"],
+                    category=skill.get("category") or "Uncategorized",
+                    aliases=skill.get("aliases") or [],
+                    roles=skill.get("roles") or [],
+                    is_custom=False,
+                    created_at=now,
+                    updated_at=now,
+                )
+            )
 
 
 def _score(value: Any) -> float:
@@ -387,3 +489,145 @@ def soft_delete_candidate(candidate_id: str) -> dict[str, Any]:
         )
         updated = conn.execute(select(candidates).where(candidates.c.id == candidate_id)).first()
     return row_to_candidate(_row_to_dict(updated))
+
+
+def _taxonomy_row(row: dict[str, Any]) -> dict[str, Any]:
+    result = dict(row)
+    for key in ("created_at", "updated_at"):
+        value = result.get(key)
+        if isinstance(value, datetime):
+            result[key] = value.isoformat()
+    for key in ("aliases", "roles"):
+        value = result.get(key)
+        if isinstance(value, str):
+            result[key] = json.loads(value)
+        elif value is None:
+            result[key] = []
+    return result
+
+
+def list_roles(include_custom: bool = True) -> list[dict[str, Any]]:
+    init_db()
+    stmt = select(role_definitions).order_by(role_definitions.c.label.asc())
+    with get_engine().connect() as conn:
+        rows = [_taxonomy_row(_row_to_dict(row)) for row in conn.execute(stmt).fetchall()]
+    if include_custom:
+        return rows
+    return [row for row in rows if not row.get("is_custom")]
+
+
+def upsert_role(role: dict[str, Any]) -> dict[str, Any]:
+    init_db()
+    role_id = str(role.get("id") or "").strip().lower()
+    label = str(role.get("label") or "").strip()
+    if not role_id or not label:
+        raise ValueError("Role id and label are required.")
+    now = _now()
+    values = {
+        "id": role_id,
+        "label": label,
+        "short_label": role.get("short_label") or role.get("shortLabel") or label,
+        "category": role.get("category") or "Custom",
+        "description": role.get("description"),
+        "is_custom": bool(role.get("is_custom", role.get("isCustom", True))),
+        "updated_at": now,
+    }
+    with get_engine().begin() as conn:
+        existing = conn.execute(select(role_definitions).where(role_definitions.c.id == role_id)).first()
+        if existing:
+            conn.execute(
+                update(role_definitions)
+                .where(role_definitions.c.id == role_id)
+                .values(**values)
+            )
+        else:
+            conn.execute(role_definitions.insert().values(**values, created_at=now))
+        updated = conn.execute(select(role_definitions).where(role_definitions.c.id == role_id)).first()
+    return _taxonomy_row(_row_to_dict(updated))
+
+
+def delete_role(role_id: str) -> None:
+    init_db()
+    with get_engine().begin() as conn:
+        existing = conn.execute(select(role_definitions).where(role_definitions.c.id == role_id)).first()
+        if not existing:
+            raise KeyError(role_id)
+        row = _row_to_dict(existing)
+        if not row.get("is_custom"):
+            raise ValueError("Default roles cannot be deleted.")
+        conn.execute(delete(role_definitions).where(role_definitions.c.id == role_id))
+
+
+def list_skills(search: str = "", role: str = "all") -> list[dict[str, Any]]:
+    init_db()
+    stmt = select(skill_taxonomy).order_by(skill_taxonomy.c.category.asc(), skill_taxonomy.c.label.asc())
+    with get_engine().connect() as conn:
+        rows = [_taxonomy_row(_row_to_dict(row)) for row in conn.execute(stmt).fetchall()]
+    query = search.strip().lower()
+    results: list[dict[str, Any]] = []
+    for skill in rows:
+        if role != "all" and role not in (skill.get("roles") or []):
+            continue
+        if query:
+            haystack = " ".join(
+                str(value)
+                for value in [
+                    skill.get("id"),
+                    skill.get("label"),
+                    skill.get("category"),
+                    *(skill.get("aliases") or []),
+                    *(skill.get("roles") or []),
+                ]
+                if value
+            ).lower()
+            if query not in haystack:
+                continue
+        results.append(skill)
+    return results
+
+
+def upsert_skill(skill: dict[str, Any]) -> dict[str, Any]:
+    init_db()
+    skill_id = str(skill.get("id") or skill.get("label") or "").strip().lower()
+    label = str(skill.get("label") or skill.get("name") or "").strip()
+    if not skill_id or not label:
+        raise ValueError("Skill id and label are required.")
+    aliases = skill.get("aliases") or []
+    roles = skill.get("roles") or []
+    if not isinstance(aliases, list):
+        aliases = [str(item).strip() for item in str(aliases).split(",") if str(item).strip()]
+    if not isinstance(roles, list):
+        roles = [str(item).strip() for item in str(roles).split(",") if str(item).strip()]
+    now = _now()
+    values = {
+        "id": skill_id,
+        "label": label,
+        "category": skill.get("category") or "Uncategorized",
+        "aliases": aliases,
+        "roles": roles,
+        "is_custom": bool(skill.get("is_custom", skill.get("isCustom", True))),
+        "updated_at": now,
+    }
+    with get_engine().begin() as conn:
+        existing = conn.execute(select(skill_taxonomy).where(skill_taxonomy.c.id == skill_id)).first()
+        if existing:
+            existing_row = _row_to_dict(existing)
+            values["is_custom"] = bool(existing_row.get("is_custom", values["is_custom"]))
+            conn.execute(
+                update(skill_taxonomy)
+                .where(skill_taxonomy.c.id == skill_id)
+                .values(**values)
+            )
+        else:
+            conn.execute(skill_taxonomy.insert().values(**values, created_at=now))
+        updated = conn.execute(select(skill_taxonomy).where(skill_taxonomy.c.id == skill_id)).first()
+    return _taxonomy_row(_row_to_dict(updated))
+
+
+def delete_skill(skill_id: str) -> None:
+    init_db()
+    with get_engine().begin() as conn:
+        existing = conn.execute(select(skill_taxonomy).where(skill_taxonomy.c.id == skill_id)).first()
+        if not existing:
+            raise KeyError(skill_id)
+        conn.execute(delete(skill_taxonomy).where(skill_taxonomy.c.id == skill_id))

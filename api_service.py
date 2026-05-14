@@ -46,6 +46,27 @@ class ShortlistUpdate(BaseModel):
     is_shortlisted: bool
 
 
+class RoleDefinition(BaseModel):
+    id: str
+    label: str
+    short_label: str | None = None
+    shortLabel: str | None = None
+    category: str | None = None
+    description: str | None = None
+    is_custom: bool | None = None
+    isCustom: bool | None = None
+
+
+class SkillDefinition(BaseModel):
+    id: str
+    label: str
+    category: str | None = None
+    aliases: list[str] = []
+    roles: list[str] = []
+    is_custom: bool | None = None
+    isCustom: bool | None = None
+
+
 def _build_groq_client() -> object | None:
     api_key = os.environ.get("GROQ_API_KEY")
     if not api_key or not rp.HAS_GROQ:
@@ -55,6 +76,12 @@ def _build_groq_client() -> object | None:
 
 def _api_mode(client: object | None) -> str:
     return "llm" if client else "rule_based"
+
+
+def _model_to_dict(payload: BaseModel) -> dict:
+    if hasattr(payload, "model_dump"):
+        return payload.model_dump()
+    return payload.dict()
 
 
 def _candidate_status(score: float | int | None) -> str:
@@ -266,6 +293,69 @@ def delete_candidate(candidate_id: str) -> dict:
         return {"ok": True, "candidate": candidate}
     except KeyError as exc:
         raise HTTPException(status_code=404, detail="Candidate not found.") from exc
+    except Exception as exc:
+        raise _storage_error(exc) from exc
+
+
+@app.get("/roles")
+def list_roles() -> dict:
+    try:
+        return {"roles": candidate_store.list_roles()}
+    except Exception as exc:
+        raise _storage_error(exc) from exc
+
+
+@app.post("/roles")
+def save_role(payload: RoleDefinition) -> dict:
+    try:
+        return {"role": candidate_store.upsert_role(_model_to_dict(payload))}
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:
+        raise _storage_error(exc) from exc
+
+
+@app.delete("/roles/{role_id}")
+def remove_role(role_id: str) -> dict:
+    try:
+        candidate_store.delete_role(role_id)
+        return {"ok": True}
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail="Role not found.") from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:
+        raise _storage_error(exc) from exc
+
+
+@app.get("/skills")
+def list_skills(
+    search: str = Query("", max_length=200),
+    role: str = Query("all", max_length=64),
+) -> dict:
+    try:
+        return {"skills": candidate_store.list_skills(search=search, role=role)}
+    except Exception as exc:
+        raise _storage_error(exc) from exc
+
+
+@app.post("/skills")
+def save_skill(payload: SkillDefinition) -> dict:
+    try:
+        return {"skill": candidate_store.upsert_skill(_model_to_dict(payload))}
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:
+        raise _storage_error(exc) from exc
+
+
+@app.delete("/skills/{skill_id}")
+def remove_skill(skill_id: str) -> dict:
+    try:
+        candidate_store.delete_skill(skill_id)
+        return {"ok": True}
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail="Skill not found.") from exc
     except Exception as exc:
         raise _storage_error(exc) from exc
 

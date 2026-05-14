@@ -1,8 +1,8 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Resume Parser",
-  description: "Upload a PDF resume and inspect the parsed candidate profile."
+  title: "ResumeRank ATS Workspace",
+  description: "Enterprise ATS dashboard for parsing, ranking, filtering, and reviewing resumes."
 };
 
 export default function RootLayout({ children }) {
