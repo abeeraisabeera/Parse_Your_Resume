@@ -1,5 +1,22 @@
 import { DEFAULT_SKILLS, ROLE_DEFINITIONS } from "./constants";
 
+function mergeDefaultSkills(managedSkills = []) {
+  const byId = new Map();
+  DEFAULT_SKILLS.forEach((skill) => {
+    byId.set(skill.id, skill);
+  });
+  managedSkills.forEach((skill) => {
+    const id = skill.id || skill.name || skill.label;
+    if (!id) return;
+    byId.set(id, {
+      ...byId.get(id),
+      ...skill,
+      id
+    });
+  });
+  return [...byId.values()];
+}
+
 async function readJson(response, fallbackMessage) {
   const payload = await response.json().catch(() => ({ error: fallbackMessage }));
   if (!response.ok) {
@@ -12,7 +29,7 @@ export async function loadSkills() {
   try {
     const response = await fetch("/api/skills", { cache: "no-store" });
     const payload = await readJson(response, "Unable to load managed skills.");
-    return payload.skills?.length ? payload.skills : DEFAULT_SKILLS;
+    return mergeDefaultSkills(payload.skills || []);
   } catch {
     return DEFAULT_SKILLS;
   }

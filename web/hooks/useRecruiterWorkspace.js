@@ -219,10 +219,12 @@ export function useRecruiterWorkspace() {
     }
   }
 
-  async function removeCandidate(candidate = selectedCandidate) {
+  async function removeCandidate(candidate = selectedCandidate, options = {}) {
     if (!candidate?.id) return;
-    const confirmed = window.confirm("Delete this outdated resume from the active list?");
-    if (!confirmed) return;
+    if (!options.skipConfirm) {
+      const confirmed = window.confirm("Delete this outdated resume from the active list?");
+      if (!confirmed) return;
+    }
     setActionLoading("delete");
     setError("");
     try {

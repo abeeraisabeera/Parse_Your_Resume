@@ -961,6 +961,7 @@ select:focus-visible {
   display: grid;
   gap: 16px;
   min-width: 0;
+  max-width: 100%;
 }
 
 .filterPanel.compact .filterGrid {
@@ -971,9 +972,33 @@ select:focus-visible {
   margin-bottom: 0;
 }
 
-.filterPanel select[multiple] {
-  min-height: 132px;
-  padding: 8px;
+.filterPanel {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.filterStack {
+  display: grid;
+  gap: 14px;
+}
+
+.filterSection {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.filterSection h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.filterSectionHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
 }
 
 .filterGrid,
@@ -982,6 +1007,58 @@ select:focus-visible {
 .stateGrid {
   display: grid;
   gap: 12px;
+  min-width: 0;
+}
+
+.primaryFilters {
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+}
+
+.skillChecklist {
+  display: grid;
+  gap: 12px;
+  max-height: 280px;
+  overflow: auto;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #fff;
+}
+
+.skillGroup {
+  display: grid;
+  gap: 8px;
+}
+
+.skillGroup strong {
+  color: var(--text);
+  font-size: 0.86rem;
+}
+
+.skillCheckGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 8px;
+}
+
+.skillCheck {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 7px 10px;
+  background: #f8f9fd;
+  color: var(--text);
+  font-size: 0.84rem;
+}
+
+.skillCheck span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @media (min-width: 760px) {
@@ -1028,11 +1105,18 @@ select:focus-visible {
 
 .candidateTableHeadWide,
 .candidateRowWide {
-  grid-template-columns: 58px minmax(190px, 1.4fr) 130px 105px 110px 105px 130px 112px;
+  grid-template-columns: 48px minmax(180px, 1.5fr) minmax(120px, 0.9fr) 90px 98px 90px 112px 104px;
 }
 
 .candidateRowWide {
   cursor: default;
+}
+
+.candidateTable {
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  padding-bottom: 2px;
 }
 
 .rowButton,
@@ -1178,6 +1262,21 @@ select:focus-visible {
   background: rgba(244, 246, 251, 0.9);
   padding: 8px 0;
   backdrop-filter: blur(12px);
+}
+
+.deleteConfirmPanel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border: 1px solid rgba(239, 68, 68, 0.22);
+  border-radius: 18px;
+  padding: 14px;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.deleteConfirmPanel h3 {
+  margin: 0 0 4px;
 }
 
 .profileGrid {
@@ -1498,7 +1597,7 @@ select:focus-visible {
 
   .candidateTableHeadWide,
   .candidateRowWide {
-    min-width: 980px;
+    min-width: 860px;
   }
 
   .scoreBreakdown > div {

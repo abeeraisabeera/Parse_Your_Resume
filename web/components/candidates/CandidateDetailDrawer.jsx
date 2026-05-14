@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import {
   candidateMissingSkills,
   formatPercent,
@@ -31,6 +33,8 @@ export function CandidateDetailDrawer({
   onDelete,
   actionLoading
 }) {
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+
   if (!open || !candidate) return null;
 
   const missingSkills = candidateMissingSkills(candidate, skills);
@@ -81,12 +85,39 @@ export function CandidateDetailDrawer({
           <button
             className="dangerButton"
             type="button"
-            onClick={() => onDelete(candidate)}
+            onClick={() => setConfirmingDelete(true)}
             disabled={actionLoading === "delete" || candidate.is_deleted}
           >
             Delete
           </button>
         </div>
+
+        {confirmingDelete ? (
+          <section className="deleteConfirmPanel" role="alertdialog" aria-label="Confirm candidate deletion">
+            <div>
+              <h3>Delete this candidate?</h3>
+              <p className="subtle">
+                This will remove {candidate.name || "this candidate"} from the active list. You can still show deleted resumes from filters.
+              </p>
+            </div>
+            <div className="tableActions">
+              <button className="secondaryButton" type="button" onClick={() => setConfirmingDelete(false)}>
+                Cancel
+              </button>
+              <button
+                className="dangerButton"
+                type="button"
+                onClick={() => {
+                  setConfirmingDelete(false);
+                  onDelete(candidate, { skipConfirm: true });
+                }}
+                disabled={actionLoading === "delete"}
+              >
+                Confirm Delete
+              </button>
+            </div>
+          </section>
+        ) : null}
 
         <section className="detailStats">
           <DetailMetric label="ATS Score" value={formatPercent(getOverallScore(candidate))} />
