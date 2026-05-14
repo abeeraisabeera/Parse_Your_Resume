@@ -144,6 +144,8 @@ select {
   border-radius: 18px;
   padding: 14px;
   box-shadow: var(--shadow);
+  min-width: 0;
+  max-width: 100%;
 }
 
 .panel.soft {
@@ -751,6 +753,7 @@ select:focus-visible {
   gap: 16px;
   max-width: 1680px;
   margin: 0 auto;
+  min-width: 0;
 }
 
 @media (min-width: 1120px) {
@@ -876,6 +879,8 @@ select:focus-visible {
 .pageGrid {
   display: grid;
   gap: 16px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .wideMetrics {
@@ -896,6 +901,8 @@ select:focus-visible {
 .candidateLayout {
   display: grid;
   gap: 16px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 @media (min-width: 1080px) {
@@ -949,6 +956,13 @@ select:focus-visible {
   text-align: left;
 }
 
+.roleTab span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .roleTab.active,
 .activeControl {
   border-color: rgba(123, 97, 255, 0.35);
@@ -962,6 +976,19 @@ select:focus-visible {
   gap: 16px;
   min-width: 0;
   max-width: 100%;
+}
+
+.candidateMain > .panel {
+  overflow: hidden;
+}
+
+.candidateMain .panelHeader {
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.candidateMain .panelHeader > * {
+  min-width: 0;
 }
 
 .filterPanel.compact .filterGrid {
@@ -1106,6 +1133,7 @@ select:focus-visible {
 .candidateTableHeadWide,
 .candidateRowWide {
   grid-template-columns: 48px minmax(180px, 1.5fr) minmax(120px, 0.9fr) 90px 98px 90px 112px 104px;
+  min-width: 920px;
 }
 
 .candidateRowWide {
@@ -1113,6 +1141,7 @@ select:focus-visible {
 }
 
 .candidateTable {
+  width: 100%;
   max-width: 100%;
   min-width: 0;
   overflow-x: auto;
@@ -1597,7 +1626,7 @@ select:focus-visible {
 
   .candidateTableHeadWide,
   .candidateRowWide {
-    min-width: 860px;
+    min-width: 920px;
   }
 
   .scoreBreakdown > div {
