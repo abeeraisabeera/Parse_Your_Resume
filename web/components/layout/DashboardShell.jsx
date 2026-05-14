@@ -11,7 +11,8 @@ const NAV_ITEMS = [
   { href: "/candidates", label: "Candidates", hint: "Talent pool" },
   { href: "/upload", label: "Upload & Parsing", hint: "Intake" },
   { href: "/analytics", label: "Analytics", hint: "Insights" },
-  { href: "/skills", label: "Skills Management", hint: "Taxonomy" },
+  { href: "/skills", label: "Skills Management", hint: "Skills" },
+  { href: "/roles", label: "Role Categories", hint: "Segments" },
   { href: "/filters", label: "Filters", hint: "Presets" },
   { href: "/settings", label: "Settings", hint: "System" }
 ];
@@ -37,8 +38,10 @@ export function DashboardShell({ children }) {
           type="button"
           onClick={() => setCollapsed((value) => !value)}
           aria-pressed={collapsed}
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          {collapsed ? "Expand" : "Collapse"}
+          <span className="collapseIcon" aria-hidden="true">{collapsed ? ">" : "<"}</span>
+          <span className="collapseLabel">{collapsed ? "Expand" : "Collapse"}</span>
         </button>
 
         <nav className="navList">

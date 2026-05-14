@@ -159,7 +159,7 @@ export function DashboardOverview({ workspace }) {
                 <strong>{candidate.name || "Unknown"}</strong>
                 <small>{roleLabel(candidate.role_detected)} - {candidate.estimated_years_of_experience || 0} yrs</small>
               </span>
-              <span>{formatPercent(getOverallScore(candidate))}</span>
+              <span className="previewScore">{formatPercent(getOverallScore(candidate))}</span>
               <StatusBadge status={candidate.candidate_status} />
             </div>
           )) : <p className="emptyState">Upload resumes to populate top candidates.</p>}

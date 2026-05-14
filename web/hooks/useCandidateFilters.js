@@ -123,7 +123,13 @@ export function useCandidateFilters() {
     const chips = [];
     if (filters.search) chips.push({ key: "search", label: `Search: ${filters.search}` });
     if (filters.roleFilter !== "all") chips.push({ key: "roleFilter", label: `Role: ${filters.roleFilter}` });
-    if (filters.skillFilter) chips.push({ key: "skillFilter", label: `Skills: ${filters.skillFilter}` });
+    filters.skillFilter
+      .split(/[,;]/)
+      .map((skill) => skill.trim())
+      .filter(Boolean)
+      .forEach((skill) => {
+        chips.push({ key: `skillFilter:${skill}`, label: `Skill: ${skill}` });
+      });
     if (filters.shortlistFilter !== "all") chips.push({ key: "shortlistFilter", label: `Shortlist: ${filters.shortlistFilter}` });
     if (Number(filters.minExperience) > 0) chips.push({ key: "minExperience", label: `${filters.minExperience}+ yrs` });
     if (Number(filters.minScore) > 0) chips.push({ key: "minScore", label: `${filters.minScore}%+ ATS` });
@@ -137,6 +143,19 @@ export function useCandidateFilters() {
   }, [filters]);
 
   function removeFilter(key) {
+    if (key.startsWith("skillFilter:")) {
+      const skillToRemove = key.replace("skillFilter:", "").toLowerCase();
+      setFilters((current) => ({
+        ...current,
+        skillFilter: current.skillFilter
+          .split(/[,;]/)
+          .map((skill) => skill.trim())
+          .filter((skill) => skill && skill.toLowerCase() !== skillToRemove)
+          .join(", ")
+      }));
+      return;
+    }
+
     setFilters((current) => ({
       ...current,
       [key]: DEFAULT_FILTERS[key]

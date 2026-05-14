@@ -813,12 +813,21 @@ select:focus-visible {
 }
 
 .collapseButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 9px 12px;
   background: var(--panel-soft);
   color: var(--muted);
   cursor: pointer;
+}
+
+.collapseIcon {
+  font-weight: 800;
+  color: var(--accent);
 }
 
 .brandWide {
@@ -848,8 +857,15 @@ select:focus-visible {
   .sidebarCollapsed .brandWide div:last-child,
   .sidebarCollapsed .navText,
   .sidebarCollapsed .systemCard,
-  .sidebarCollapsed .collapseButton {
+  .sidebarCollapsed .collapseLabel {
     display: none;
+  }
+
+  .sidebarCollapsed .collapseButton {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    justify-self: center;
   }
 
   .sidebarCollapsed .navItem {
@@ -949,6 +965,15 @@ select:focus-visible {
 
 .filterPanel.compact .filterGrid {
   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+}
+
+.filterPanel.collapsed .filterChips {
+  margin-bottom: 0;
+}
+
+.filterPanel select[multiple] {
+  min-height: 132px;
+  padding: 8px;
 }
 
 .filterGrid,
@@ -1080,6 +1105,23 @@ select:focus-visible {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+}
+
+.previewRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 96px 130px;
+}
+
+.previewScore {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 800;
+  text-align: center;
 }
 
 .paginationBar {
@@ -1294,6 +1336,96 @@ select:focus-visible {
   min-height: 260px;
 }
 
+.upgradedAnalytics {
+  align-items: stretch;
+}
+
+.wideInsight {
+  grid-column: 1 / -1;
+}
+
+.insightPanel {
+  overflow: hidden;
+}
+
+.funnelChart,
+.comparisonList,
+.distributionChart,
+.splitLegend,
+.sparkList {
+  display: grid;
+  gap: 12px;
+}
+
+.funnelChart {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.funnelStage {
+  display: grid;
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px;
+  background: #fff;
+}
+
+.funnelStage strong {
+  font-size: 1.55rem;
+}
+
+.funnelStage span,
+.comparisonRow span,
+.sparkRow span {
+  color: var(--muted);
+}
+
+.comparisonRow {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr) 92px;
+  gap: 12px;
+  align-items: center;
+}
+
+.dualBars {
+  display: grid;
+  gap: 6px;
+}
+
+.scoreTrack .barFill {
+  background: linear-gradient(135deg, #16a34a 0%, #7ddf9a 100%);
+}
+
+.distributionChart {
+  min-height: 220px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: end;
+}
+
+.distributionColumn {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+}
+
+.distributionBar {
+  width: 100%;
+  max-width: 54px;
+  border-radius: 18px 18px 8px 8px;
+  background: linear-gradient(180deg, #8c75ff 0%, #5c8dff 100%);
+}
+
+.splitLegend {
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}
+
+.sparkRow {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) minmax(0, 1.2fr) 64px;
+  gap: 12px;
+  align-items: center;
+}
+
 .insightBar {
   display: grid;
   grid-template-columns: 140px minmax(0, 1fr) 58px;
@@ -1378,11 +1510,16 @@ select:focus-visible {
   .drawerHeader,
   .candidateCardFooter,
   .paginationBar,
-  .previewRow,
   .skillRow,
   .queueItem {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .previewRow,
+  .comparisonRow,
+  .sparkRow {
+    grid-template-columns: 1fr;
   }
 
   .candidateDrawer {

@@ -6,7 +6,8 @@ import {
   buildSeniorityDistribution,
   buildSummary,
   buildTopSkills,
-  formatPercent
+  formatPercent,
+  getOverallScore
 } from "../../lib/candidateUtils";
 import { StatCard } from "../common/StatCard";
 
@@ -19,6 +20,16 @@ export function AnalyticsWorkspace({ workspace }) {
   const seniorityDistribution = buildSeniorityDistribution(filteredCandidates);
   const experienceDistribution = buildExperienceDistribution(filteredCandidates);
   const scoreDistribution = buildScoreDistribution(filteredCandidates);
+  const maxRoleCount = Math.max(...roleDistribution.map((role) => role.count), 1);
+  const maxSkillCount = Math.max(...topSkills.map((skill) => skill.count), 1);
+  const funnel = [
+    { label: "Parsed", count: summary.valid_candidates || 0 },
+    { label: "High Match", count: summary.high_match || 0 },
+    { label: "Shortlisted", count: summary.shortlisted || 0 }
+  ];
+  const topCandidateScores = [...filteredCandidates]
+    .sort((a, b) => getOverallScore(b) - getOverallScore(a))
+    .slice(0, 8);
 
   return (
     <div className="pageGrid">
@@ -37,100 +48,126 @@ export function AnalyticsWorkspace({ workspace }) {
         <StatCard label="Shortlisted" value={summary.shortlisted || 0} helper="recruiter or auto selected" />
       </section>
 
-      <section className="analyticsCanvas">
-        <article className="panel">
+      <section className="analyticsCanvas upgradedAnalytics">
+        <article className="panel insightPanel wideInsight">
           <div className="panelHeader">
-            <h2>Role Distribution</h2>
+            <h2>Hiring Funnel</h2>
+            <span>Filtered pipeline</span>
+          </div>
+          <div className="funnelChart">
+            {funnel.map((stage, index) => (
+              <div className="funnelStage" key={stage.label}>
+                <strong>{stage.count}</strong>
+                <span>{stage.label}</span>
+                <div className="barTrack">
+                  <div
+                    className="barFill"
+                    style={{
+                      width: `${summary.valid_candidates ? Math.max(8, (stage.count / summary.valid_candidates) * 100) : 0}%`
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        <article className="panel insightPanel">
+          <div className="panelHeader">
+            <h2>Role Mix vs ATS Average</h2>
             <span>{roleDistribution.length} segments</span>
           </div>
-          <div className="insightBars">
-            {roleDistribution.map((role) => (
-              <div className="insightBar" key={role.role}>
+          <div className="comparisonList">
+            {roleDistribution.map((role) => {
+              const average = roleAverages.find((item) => item.role === role.role)?.avgScore || 0;
+              return (
+              <div className="comparisonRow" key={role.role}>
                 <span>{role.label}</span>
-                <div className="barTrack">
-                  <div className="barFill" style={{ width: `${(role.count / Math.max(filteredCandidates.length, 1)) * 100}%` }} />
+                <div className="dualBars">
+                  <div className="barTrack" title={`${role.count} candidates`}>
+                    <div className="barFill" style={{ width: `${(role.count / maxRoleCount) * 100}%` }} />
+                  </div>
+                  <div className="barTrack scoreTrack" title={`${average}% average ATS`}>
+                    <div className="barFill" style={{ width: `${average}%` }} />
+                  </div>
                 </div>
-                <strong>{role.count}</strong>
+                <strong>{role.count} / {formatPercent(average)}</strong>
+              </div>
+            );
+            })}
+          </div>
+        </article>
+
+        <article className="panel insightPanel">
+          <div className="panelHeader">
+            <h2>ATS Score Distribution</h2>
+            <span>Quality bands</span>
+          </div>
+          <div className="distributionChart">
+            {scoreDistribution.map((bucket) => (
+              <div className="distributionColumn" key={bucket.label}>
+                <div
+                  className="distributionBar"
+                  style={{
+                    height: `${Math.max(16, (bucket.count / Math.max(filteredCandidates.length, 1)) * 180)}px`
+                  }}
+                />
+                <strong>{bucket.count}</strong>
+                <span>{bucket.label}</span>
               </div>
             ))}
           </div>
         </article>
 
-        <article className="panel">
+        <article className="panel insightPanel heatmapPanel">
           <div className="panelHeader">
-            <h2>Role-Wise ATS Averages</h2>
-            <span>Quality signal</span>
-          </div>
-          <div className="insightBars">
-            {roleAverages.map((role) => (
-              <div className="insightBar" key={role.role}>
-                <span>{role.label}</span>
-                <div className="barTrack">
-                  <div className="barFill" style={{ width: `${role.avgScore}%` }} />
-                </div>
-                <strong>{formatPercent(role.avgScore)}</strong>
-              </div>
-            ))}
-          </div>
-        </article>
-
-        <article className="panel heatmapPanel">
-          <div className="panelHeader">
-            <h2>Role-Specific Skill Heatmap</h2>
-            <span>Top skills</span>
+            <h2>Skill Demand Heatmap</h2>
+            <span>Top extracted skills</span>
           </div>
           <div className="heatmapGrid">
             {topSkills.length ? topSkills.map((skill) => (
-              <div className="heatmapCell" key={skill.skill}>
+              <div
+                className="heatmapCell"
+                key={skill.skill}
+                style={{ opacity: 0.58 + (skill.count / maxSkillCount) * 0.42 }}
+              >
                 <strong>{skill.skill}</strong>
-                <span>{skill.count} candidates</span>
+                <span>{skill.count} candidate(s)</span>
               </div>
             )) : <p className="emptyState">No skill heatmap yet.</p>}
           </div>
         </article>
 
-        <article className="panel">
+        <article className="panel insightPanel">
           <div className="panelHeader">
-            <h2>Seniority by Role</h2>
-            <span>Experience bands</span>
+            <h2>Seniority & Experience</h2>
+            <span>Talent shape</span>
           </div>
-          <div className="experienceLegend">
-            {seniorityDistribution.map((item) => (
-              <div className="legendItem" key={item.level}>
-                <strong>{item.count}</strong>
-                <span>{item.level}</span>
-              </div>
-            ))}
-          </div>
-        </article>
-
-        <article className="panel">
-          <div className="panelHeader">
-            <h2>Experience Distribution</h2>
-            <span>Tenure</span>
-          </div>
-          <div className="experienceLegend">
-            {experienceDistribution.map((bucket) => (
+          <div className="splitLegend">
+            {[...seniorityDistribution, ...experienceDistribution].map((bucket) => (
               <div className="legendItem" key={bucket.key}>
-                <strong>{bucket.count}</strong>
-                <span>{bucket.label}</span>
+                <strong>{bucket.count || 0}</strong>
+                <span>{bucket.label || bucket.level}</span>
               </div>
             ))}
           </div>
         </article>
 
-        <article className="panel">
+        <article className="panel insightPanel">
           <div className="panelHeader">
-            <h2>Score Distribution</h2>
-            <span>ATS</span>
+            <h2>Top Candidate Score Trend</h2>
+            <span>Ranked comparison</span>
           </div>
-          <div className="experienceLegend">
-            {scoreDistribution.map((bucket) => (
-              <div className="legendItem" key={bucket.label}>
-                <strong>{bucket.count}</strong>
-                <span>{bucket.label}</span>
+          <div className="sparkList">
+            {topCandidateScores.length ? topCandidateScores.map((candidate, index) => (
+              <div className="sparkRow" key={candidate.id || candidate.uploaded_file_name || index}>
+                <span>#{index + 1} {candidate.name || "Unknown"}</span>
+                <div className="barTrack">
+                  <div className="barFill" style={{ width: `${getOverallScore(candidate)}%` }} />
+                </div>
+                <strong>{formatPercent(getOverallScore(candidate))}</strong>
               </div>
-            ))}
+            )) : <p className="emptyState">No ranked candidates yet.</p>}
           </div>
         </article>
       </section>
