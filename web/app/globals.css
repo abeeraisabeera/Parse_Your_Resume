@@ -1049,7 +1049,7 @@ select:focus-visible {
   padding: 10px;
   border: 1px solid var(--border);
   border-radius: 14px;
-  background: #fff;
+  background: var(--panel);
 }
 
 .skillGroup {
@@ -1076,7 +1076,7 @@ select:focus-visible {
   border: 1px solid var(--border);
   border-radius: 999px;
   padding: 7px 10px;
-  background: #f8f9fd;
+  background: var(--panel-soft, var(--panel));
   color: var(--text);
   font-size: 0.84rem;
 }
@@ -1412,7 +1412,7 @@ select:focus-visible {
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 11px 12px;
-  background: #fff;
+  background: var(--panel);
 }
 
 .queueItem small,

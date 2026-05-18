@@ -143,9 +143,9 @@ export function CandidateBrowser({ workspace }) {
     <div className="pageGrid candidatePage">
       <section className="pageHero">
         <div>
-          <p className="eyebrow">Candidate Workspace</p>
-          <h2>Browse candidates by role, score, and skill fit.</h2>
-          <p className="subtle">Use role groups and persistent filters to move through large resume pools quickly.</p>
+          <p className="dg-label">Talent pool</p>
+          <h1 className="dg-page-title">Candidates</h1>
+          <p className="subtle">{filteredCandidates.length} matching profiles in workspace</p>
         </div>
         <div className="tableActions">
           <button
