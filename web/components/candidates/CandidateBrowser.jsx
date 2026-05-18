@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import {
@@ -15,7 +14,6 @@ import {
 } from "../../lib/candidateUtils";
 import { exportCandidates } from "../../lib/candidateApi";
 import { CandidateFilters } from "../filters/CandidateFilters";
-import { ScoreBadge } from "../common/ScoreBadge";
 import { StatusBadge } from "../common/StatusBadge";
 import { CandidateDetailDrawer } from "./CandidateDetailDrawer";
 
@@ -86,7 +84,7 @@ function CandidateTable({ candidates, selectedCandidate, onSelect, onLearnMore }
             <span>{roleLabel(candidate.role_detected)}</span>
             <span>{candidate.estimated_years_of_experience || 0} yrs</span>
             <span>{formatPercent(getSkillsMatchScore(candidate))}</span>
-            <ScoreBadge score={getOverallScore(candidate)} />
+            <span>{formatPercent(getOverallScore(candidate))}</span>
             <span><StatusBadge status={candidate.candidate_status} /></span>
             <span>
               <button className="secondaryButton" type="button" onClick={() => onLearnMore(candidate)}>
@@ -145,69 +143,9 @@ export function CandidateBrowser({ workspace }) {
     <div className="pageGrid candidatePage">
       <section className="pageHero">
         <div>
-          <p className="eyebrow">Talent Pool</p>
-          <h1 className="pageTitle">
-            Candidates <span className="subtle">({filteredCandidates.length})</span>
-          </h1>
-          <div className="filterTabs" role="tablist" aria-label="Candidate filters">
-            <button
-              type="button"
-              className={`filterTab ${filters.shortlistFilter === "all" && filters.status === "all" ? "active" : ""}`}
-              onClick={() => {
-                setFilter("status", "all");
-                setFilter("shortlistFilter", "all");
-                setPage(1);
-              }}
-            >
-              All
-            </button>
-            <button
-              type="button"
-              className={`filterTab ${filters.shortlistFilter === "shortlisted" ? "active" : ""}`}
-              onClick={() => {
-                setFilter("shortlistFilter", "shortlisted");
-                setPage(1);
-              }}
-            >
-              Shortlisted
-            </button>
-            <button
-              type="button"
-              className={`filterTab ${filters.shortlistFilter === "not_shortlisted" ? "active" : ""}`}
-              onClick={() => {
-                setFilter("shortlistFilter", "not_shortlisted");
-                setPage(1);
-              }}
-            >
-              Rejected
-            </button>
-            <button
-              type="button"
-              className={`filterTab ${filters.status === "new" ? "active" : ""}`}
-              onClick={() => {
-                setFilter("status", "new");
-                setPage(1);
-              }}
-            >
-              New
-            </button>
-            <label className="label inlineLabel">
-              Role
-              <select
-                className="input"
-                value={filters.roleFilter}
-                onChange={(event) => {
-                  setFilter("roleFilter", event.target.value);
-                  setPage(1);
-                }}
-              >
-                <option value="all">All roles</option>
-                {roles.map((role) => (
-                  <option key={role.id} value={role.id}>{role.label}</option>
-                ))}
-              </select>
-            </label>
-          </div>
+          <p className="eyebrow">Candidate Workspace</p>
+          <h2>Browse candidates by role, score, and skill fit.</h2>
+          <p className="subtle">Use role groups and persistent filters to move through large resume pools quickly.</p>
         </div>
         <div className="tableActions">
           <button
