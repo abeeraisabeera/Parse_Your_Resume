@@ -397,7 +397,7 @@ select {
 
 .candidateRow {
   border: 1px solid var(--border);
-  background: #fff;
+  background: var(--panel);
   border-radius: 14px;
   padding: 10px;
   text-align: left;
@@ -405,7 +405,7 @@ select {
 }
 
 .candidateRow.active {
-  border-color: rgba(123, 97, 255, 0.35);
+  border-color: var(--accent-border, rgba(78, 205, 196, 0.35));
   background: var(--accent-soft);
 }
 
@@ -530,10 +530,10 @@ select {
   width: 100%;
   min-height: 280px;
   border: 1px solid var(--border);
-  border-radius: 20px;
+  border-radius: 16px;
   padding: 20px;
-  background: linear-gradient(180deg, #ffffff 0%, #f5f7fd 100%);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+  background: var(--panel-soft, var(--panel));
+  box-shadow: none;
 }
 
 .docTitle {
@@ -573,7 +573,12 @@ select {
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 10px;
-  background: #fff;
+  background: var(--panel);
+}
+
+.detailStats div span {
+  color: var(--muted);
+  font-size: 12px;
 }
 
 .detailStats strong {
@@ -1132,8 +1137,9 @@ select:focus-visible {
 
 .candidateTableHeadWide,
 .candidateRowWide {
-  grid-template-columns: 48px minmax(180px, 1.5fr) minmax(120px, 0.9fr) 90px 98px 90px 112px 104px;
+  grid-template-columns: 48px minmax(160px, 1.4fr) minmax(100px, 0.85fr) 72px 80px 72px minmax(88px, 0.7fr) minmax(112px, auto);
   min-width: 920px;
+  align-items: center;
 }
 
 .candidateRowWide {
@@ -1173,14 +1179,16 @@ select:focus-visible {
   display: grid;
   gap: 12px;
   border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 14px;
-  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  background: var(--panel);
+  min-width: 0;
 }
 
 .candidateCard.active {
-  border-color: rgba(123, 97, 255, 0.35);
-  box-shadow: 0 18px 38px rgba(123, 97, 255, 0.12);
+  border-color: var(--accent-border, rgba(78, 205, 196, 0.35));
+  background: var(--accent-soft);
+  box-shadow: none;
 }
 
 .candidateCard.deleted {
@@ -1218,6 +1226,34 @@ select:focus-visible {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+}
+
+.candidateCardFooter {
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.candidateRowAction {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.candidateRowAction .secondaryButton {
+  padding: 6px 12px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.candidateRowWide > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.candidateRowWide > .candidateRowAction {
+  overflow: visible;
 }
 
 .previewRow {
@@ -1269,7 +1305,8 @@ select:focus-visible {
   gap: 16px;
   padding: 20px;
   background: var(--bg);
-  box-shadow: -28px 0 70px rgba(17, 24, 39, 0.18);
+  box-shadow: none;
+  border-left: 1px solid var(--border);
 }
 
 .drawerHeader {
@@ -1277,9 +1314,9 @@ select:focus-visible {
   justify-content: space-between;
   gap: 14px;
   align-items: flex-start;
-  background: #fff;
+  background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 22px;
+  border-radius: 16px;
   padding: 16px;
 }
 
@@ -1288,7 +1325,8 @@ select:focus-visible {
   top: 0;
   z-index: 2;
   justify-content: flex-start;
-  background: rgba(244, 246, 251, 0.9);
+  flex-wrap: wrap;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
   padding: 8px 0;
   backdrop-filter: blur(12px);
 }
@@ -1321,14 +1359,14 @@ select:focus-visible {
 
 .detailCardBlock {
   border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 14px;
-  background: #fff;
-  box-shadow: var(--shadow);
+  border-radius: 16px;
+  padding: 16px;
+  background: var(--panel);
+  box-shadow: none;
 }
 
 .detailCardBlock h3 {
-  margin: 0 0 12px;
+  color: var(--text);
 }
 
 .detailCardBlock.wide {
@@ -1341,7 +1379,7 @@ select:focus-visible {
 
 .mutedChip {
   color: var(--muted);
-  background: #f6f7fb;
+  background: var(--panel-soft, var(--border));
 }
 
 .warningChip {

@@ -11,6 +11,7 @@
   --dg-accent: #4ecdc4;
   --dg-accent-hover: #3dbdb4;
   --dg-accent-tint: rgba(78, 205, 196, 0.1);
+  --dg-accent-border: rgba(78, 205, 196, 0.35);
   --dg-hover-tint: rgba(255, 255, 255, 0.05);
   --dg-success: #10b981;
   --dg-warning: #f59e0b;
@@ -29,6 +30,7 @@
   --dg-accent: #4ecdc4;
   --dg-accent-hover: #3dbdb4;
   --dg-accent-tint: rgba(78, 205, 196, 0.12);
+  --dg-accent-border: rgba(78, 205, 196, 0.35);
   --dg-hover-tint: rgba(0, 0, 0, 0.05);
   --dg-success: #10b981;
   --dg-warning: #f59e0b;
@@ -48,6 +50,8 @@
   --muted: var(--dg-text-secondary);
   --accent: var(--dg-accent);
   --accent-soft: var(--dg-accent-tint);
+  --accent-border: var(--dg-accent-border);
+  --panel-soft: var(--dg-surface-elevated);
   --success: var(--dg-success);
   --warning: var(--dg-warning);
   --danger: var(--dg-danger);
@@ -1002,4 +1006,96 @@ select:focus-visible {
   color: var(--dg-text-secondary);
   font-size: 12px;
   font-weight: 500;
+}
+
+/* —— Candidate drawer & cards (dark mode) —— */
+.candidateDrawer {
+  background: var(--dg-bg) !important;
+  color: var(--dg-text);
+}
+
+.drawerHeader,
+.detailCardBlock,
+.detailStats > div,
+.docSheet,
+.drawerHeader .candidateHero h2,
+.drawerHeader .candidateHero .eyebrow {
+  background: var(--dg-surface) !important;
+  color: var(--dg-text);
+  border-color: var(--dg-border) !important;
+  box-shadow: none !important;
+}
+
+.drawerHeader .subtle,
+.drawerHeader .candidateMeta,
+.detailStats > div > span {
+  color: var(--dg-text-secondary) !important;
+}
+
+.stickyActions {
+  background: color-mix(in srgb, var(--dg-bg) 90%, transparent) !important;
+}
+
+.candidateCard {
+  background: var(--dg-surface) !important;
+  border-color: var(--dg-border) !important;
+  color: var(--dg-text);
+}
+
+.candidateCard.active {
+  background: var(--dg-accent-tint) !important;
+  border-color: var(--dg-accent-border) !important;
+  box-shadow: none !important;
+}
+
+.candidateCard .cardMetrics span {
+  background: var(--dg-surface-elevated) !important;
+  border-color: var(--dg-border) !important;
+  color: var(--dg-text);
+}
+
+.candidateCard .cardMetrics small,
+.candidateCard .candidateMeta {
+  color: var(--dg-text-secondary) !important;
+}
+
+.candidateCardFooter {
+  width: 100%;
+}
+
+.candidateCardFooter .secondaryButton {
+  flex: 0 1 auto;
+  max-width: 100%;
+}
+
+.bulletList li,
+.timelineList li {
+  color: var(--dg-text-secondary);
+}
+
+.bulletList li strong,
+.timelineList li strong {
+  color: var(--dg-text);
+}
+
+.deleteConfirmPanel {
+  background: rgba(239, 68, 68, 0.1) !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+}
+
+.deleteConfirmPanel h3 {
+  color: var(--dg-text);
+}
+
+.drawerScrim {
+  background: rgba(0, 0, 0, 0.55) !important;
+}
+
+.candidateMain > .panel {
+  overflow: hidden;
+}
+
+.candidateTable {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }

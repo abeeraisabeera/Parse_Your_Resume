@@ -86,11 +86,11 @@ function CandidateTable({ candidates, selectedCandidate, onSelect, onLearnMore }
             <span>{formatPercent(getSkillsMatchScore(candidate))}</span>
             <span>{formatPercent(getOverallScore(candidate))}</span>
             <span><StatusBadge status={candidate.candidate_status} /></span>
-            <span>
+            <div className="candidateRowAction">
               <button className="secondaryButton" type="button" onClick={() => onLearnMore(candidate)}>
                 Learn More
               </button>
-            </span>
+            </div>
           </div>
         );
       })}
