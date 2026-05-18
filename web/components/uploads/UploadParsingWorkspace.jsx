@@ -1,5 +1,9 @@
 "use client";
 
+import { useState } from "react";
+
+import { IconUpload } from "../common/Icons";
+
 export function UploadParsingWorkspace({ workspace }) {
   const {
     files,
@@ -15,9 +19,11 @@ export function UploadParsingWorkspace({ workspace }) {
     submitUpload,
     error
   } = workspace;
+  const [dragOver, setDragOver] = useState(false);
 
   function handleDrop(event) {
     event.preventDefault();
+    setDragOver(false);
     setFiles(Array.from(event.dataTransfer.files || []).filter((file) => file.type === "application/pdf" || file.name.endsWith(".pdf")));
   }
 
@@ -25,9 +31,9 @@ export function UploadParsingWorkspace({ workspace }) {
     <div className="pageGrid">
       <section className="pageHero">
         <div>
-          <p className="eyebrow">Upload & Parsing</p>
-          <h2>Dedicated resume intake workflow.</h2>
-          <p className="subtle">Batch PDF uploads still use the existing `/api/parse` proxy and FastAPI parsing pipeline.</p>
+          <p className="eyebrow">Intake</p>
+          <h1 className="pageTitle">Upload &amp; Parsing</h1>
+          <p className="subtle">Batch PDF uploads use the `/api/parse` proxy and FastAPI parsing pipeline.</p>
         </div>
       </section>
 
@@ -45,8 +51,12 @@ export function UploadParsingWorkspace({ workspace }) {
 
           <form className="form" onSubmit={submitUpload}>
             <label
-              className={`uploadZone largeUpload ${loading ? "isLoading" : ""}`}
-              onDragOver={(event) => event.preventDefault()}
+              className={`uploadZone largeUpload ${loading ? "isLoading" : ""} ${dragOver ? "isDragOver" : ""}`}
+              onDragOver={(event) => {
+                event.preventDefault();
+                setDragOver(true);
+              }}
+              onDragLeave={() => setDragOver(false)}
               onDrop={handleDrop}
             >
               <input
@@ -56,8 +66,9 @@ export function UploadParsingWorkspace({ workspace }) {
                 multiple
                 onChange={(event) => setFiles(Array.from(event.target.files || []))}
               />
-              <strong>Drag and drop resumes here</strong>
-              <span>or click to select PDF files from your device</span>
+              <span className="uploadIcon" aria-hidden="true"><IconUpload className="iconActive" size={32} /></span>
+              <strong>Drop resumes here or click to browse</strong>
+              <span>PDF only — single or batch upload</span>
             </label>
 
             <div className="formGrid">

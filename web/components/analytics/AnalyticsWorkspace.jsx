@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+
 import {
   buildExperienceDistribution,
   buildRoleAverages,
@@ -11,8 +15,11 @@ import {
 } from "../../lib/candidateUtils";
 import { StatCard } from "../common/StatCard";
 
+const DATE_PRESETS = ["7d", "30d", "90d", "Year", "Custom"];
+
 export function AnalyticsWorkspace({ workspace }) {
   const { filteredCandidates } = workspace;
+  const [dateRange, setDateRange] = useState("30d");
   const summary = buildSummary(filteredCandidates);
   const topSkills = buildTopSkills(filteredCandidates, 10);
   const roleDistribution = buildRoleDistribution(filteredCandidates);
@@ -35,9 +42,21 @@ export function AnalyticsWorkspace({ workspace }) {
     <div className="pageGrid">
       <section className="pageHero">
         <div>
-          <p className="eyebrow">Analytics</p>
-          <h2>Recruiter-oriented intelligence for the active talent pool.</h2>
+          <p className="eyebrow">Insights</p>
+          <h1 className="pageTitle">Analytics</h1>
           <p className="subtle">Analytics respect global filters, including role and managed skill selections.</p>
+          <div className="dateRange" role="group" aria-label="Date range">
+            {DATE_PRESETS.map((preset) => (
+              <button
+                key={preset}
+                type="button"
+                className={dateRange === preset ? "active" : ""}
+                onClick={() => setDateRange(preset)}
+              >
+                {preset}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 
